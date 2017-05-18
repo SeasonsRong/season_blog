@@ -12,12 +12,15 @@ Class-based views
 Including another URLconf
     1. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import include, url
+from django.conf.urls import *
 from django.contrib import admin
+
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', 'article.views.home'),  #由于目前只有一个app, 方便起见, 就不设置include了
 #    url(r'^\d+/$', 'article.views.detail', name='detail'),
 #    url(r'^test/$', 'article.views.test'),
+    url(r'^(?P<id>\d+)/$', 'article.views.detail', name='detail'),
+
 ]
