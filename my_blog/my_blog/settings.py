@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from django.conf import global_settings
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -39,18 +40,18 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'article',#新增app
+    'ckeditor', # 添加应用富文本编辑器 ckeditor
+    'ckeditor_uploader',
+#    'tinymce',
+    'django_comments', 
+    'django.contrib.sites', 
 )
-from django.conf import global_settings
-TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
-    'django.core.context_processors.request',
-)
-BOOTSTRAP_ADMIN_SIDEBAR_MENU = True
 
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+#    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -72,11 +73,14 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.core.context_processors.request',
             ],
         },
     },
 ]
- 
+
+BOOTSTRAP_ADMIN_SIDEBAR_MENU = True
+
 
 WSGI_APPLICATION = 'my_blog.wsgi.application'
 
@@ -110,3 +114,70 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static') 
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+CKEDITOR_UPLOAD_PATH = os.path.join(MEDIA_ROOT, 'ckeditor/uploads')
+CKEDITOR_IMAGE_BACKEND = 'PIL' 
+
+
+TINYMCE_DEFAULT_CONFIG = {
+'theme': 'advanced',
+'width': 600,
+'height': 400,
+}
+# more details on how to customize your logging configuration.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        }, # 针对 DEBUG = True 的情况
+    },
+    'formatters': {
+        'standard': {
+            'format': '%(levelname)s %(asctime)s %(pathname)s %(filename)s %(module)s %(funcName)s %(lineno)d: %(message)s'
+        }, # 对日志信息进行格式化，每个字段对应了日志格式中的一个字段，更多字段参考官网文档，我认为这些字段比较合适，输出类似于下面的内容
+        # INFO 2016-09-03 16:25:20,067 /home/ubuntu/mysite/views.py views.py views get 29: some info...
+    },
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+             'formatter':'standard'
+        },
+        'file_handler': {
+             'level': 'DEBUG',
+             'class': 'logging.handlers.TimedRotatingFileHandler',
+             'filename': 'd:/myblog.admin.log',
+             'formatter':'standard'
+        }, # 用于文件输出
+        'console':{
+            'level': 'INFO',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers' :['file_handler', 'console'],
+            'level':'DEBUG',
+            'propagate': True # 是否继承父类的log信息
+        }, # handlers 来自于上面的 handlers 定义的内容
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+    }
+}
+STATICFILES_DIRS = (                                                                             
+    os.path.join(BASE_DIR, "static1"),                                                              
+)                                                                                                    
+                                                                                                        
+SITE_ID = 1
+
+CKEDITOR_JQUERY_URL ='https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js' 

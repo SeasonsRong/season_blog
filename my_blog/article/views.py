@@ -4,7 +4,14 @@ from article.models import Article
 from datetime import datetime
 from django.http import Http404
 from django.contrib.syndication.views import Feed  #注意加入import语句
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger#添加包
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger #添加包
+import django_comments 
+from django.http import HttpResponseRedirect
+from django_comments.models import Comment
+import traceback  
+
+import logging
+logger = logging.getLogger("django") # 为loggers中定义的名称
 
 
 # Create your views here.
@@ -16,16 +23,24 @@ def home(request):
         post_list = paginator.page(page)
     except PageNotAnInteger :
         post_list = paginator.page(1)
+        traceback.print_exc(file=open('D:/tb.txt','w+'))
     except EmptyPage :
+    	logger.info("post infor")
         post_list = paginator.paginator(paginator.num_pages)
+        traceback.print_exc(file=open('D:/tb.txt','w+'))
     return render(request, 'home.html', {'post_list' : post_list})
+
+    	
 
 def detail(request, id):
     try:
         post = Article.objects.get(id=str(id))
+#        blog_comment=django_comments.models.Comment.objects.get(id=str(id))
+#        logger.info(post)
     except Article.DoesNotExist:
        raise Http404
     return render(request, 'post.html', {'post' : post})
+    
     	
 def search_tag(request, tag) :
     try:
@@ -78,3 +93,19 @@ class RSSFeed(Feed) :
 
     def item_description(self, item):
         return item.content
+        
+def sub_comment(request):
+#    comment_list=django_comments.models.Comment.objects.all()
+#    logger.info("comment is:"+comment_list.comment)
+    blog_id = request.POST.get('post_id') 
+    logger.info("blog id is:"+str(blog_id)) 
+    #django_comments表中需要blog_id参数
+    comment=request.POST.get('comment_content')                 
+    django_comments.models.Comment.objects.create(
+        content_type_id=9,                                               #content_type_id=9代表的是博客，8代表tag
+        object_pk=blog_id,                                               
+        site_id=1,
+        user=request.user,                                               #当前登录的用户
+        comment=comment,
+    )
+    return HttpResponseRedirect('/%s' %blog_id)

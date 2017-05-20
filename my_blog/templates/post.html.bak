@@ -1,24 +1,54 @@
-<!--post.html-->
+﻿<!--post.html-->
 {% extends "base.html" %}
 {% load custom_markdown %}
 
 {% block content %}
+{% load comments %} 
+<!---<script type="text/javascript" charset="utf8" src="/static/kindeditor/kindeditor.js"></script>
+<script type="text/javascript" charset="utf8" src="/static/kindeditor/lang/zh_CN.js"></script>
+<script>                   
+    var editor;
+    KindEditor.ready(function(K){
+        editor = K.create('textarea[name="content"]',{                                           
+
+        });
+    });
+</script>--->
 <div class="posts">
         <section class="post">
             <header class="post-header">
                 <h2 class="post-title">{{ post.title }}</h2>
 
                     <p class="post-meta">
-                        Time:  <a class="post-author" href="#">{{ post.date_time|date:'Y /m /d'}}</a> <a class="post-category post-category-js" href="{% url 'search_tag' tag=post.category %}">{{ post.category }}</a>
+                        Time:  <a class="post-author" href="#">{{ post.date_time|date:'Y /m /d'}}</a> <a class="post-category post-category-js" href="{% url 'article.views.search_tag' tag=post.category %}">{{ post.category }}</a>
                     </p>
             </header>
 
                 <div class="post-description">
                     <p>
-                        {{ post.content|custom_markdown }}
+                        {% autoescape on %}                  
+                        {{ post.content|custom_markdown |safe}}
+                    
+                        {% endautoescape %}
                     </p>
                 </div>
+                    
         </section>
-        {% include "duoshuo.html" %}
+       <h3>comments</h3>
+           <ul>
+{% get_comment_list for post as comment_list %}
+{% for comment in comment_list %}
+<p>Posted by: {{ comment.user_name }} on {{ comment.submit_date }}</p>
+<p>Comment: {{ comment.comment }}</p>
+{% endfor %}
+          </ul>
+ <h3>leave a comment</h3>
+ <form action="/sub_comment/" class="pure-form pure-form-stacked" method="post">  
+ 
+ <textarea name="comment_content"></textarea>                                            
+ <input type="hidden" name="post_id" value={{post.id}}>                                  
+ <input type="submit" class="pure-button" value="ok">                                    
+ </form>         
 </div><!-- /.blog-post -->
+<script type="text/javascript">SyntaxHighlighter.all();</script>  
 {% endblock %}
