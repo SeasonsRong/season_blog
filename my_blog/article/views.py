@@ -9,15 +9,15 @@ import django_comments
 from django.http import HttpResponseRedirect
 from django_comments.models import Comment
 import traceback  
-
+from django.template.context_processors import csrf
 import logging
 logger = logging.getLogger("django") # 为loggers中定义的名称
-
+from django.template import loader, RequestContext
 
 # Create your views here.
 def home(request):
     posts = Article.objects.all()  #获取全部的Article对象
-    paginator = Paginator(posts, 2)#每页显示两个
+    paginator = Paginator(posts, 10)#每页显示两个
     page = request.GET.get('page')
     try :
         post_list = paginator.page(page)
@@ -39,7 +39,7 @@ def detail(request, id):
 #        logger.info(post)
     except Article.DoesNotExist:
        raise Http404
-    return render(request, 'post.html', {'post' : post})
+    return render(request, 'post.html', {'post' : post},context_instance=RequestContext(request))
     
     	
 def search_tag(request, tag) :
@@ -94,18 +94,18 @@ class RSSFeed(Feed) :
     def item_description(self, item):
         return item.content
         
-def sub_comment(request):
-#    comment_list=django_comments.models.Comment.objects.all()
-#    logger.info("comment is:"+comment_list.comment)
-    blog_id = request.POST.get('post_id') 
-    logger.info("blog id is:"+str(blog_id)) 
-    #django_comments表中需要blog_id参数
-    comment=request.POST.get('comment_content')                 
-    django_comments.models.Comment.objects.create(
-        content_type_id=9,                                               #content_type_id=9代表的是博客，8代表tag
-        object_pk=blog_id,                                               
-        site_id=1,
-        user=request.user,                                               #当前登录的用户
-        comment=comment,
-    )
-    return HttpResponseRedirect('/%s' %blog_id)
+#def sub_comment(request):
+##    comment_list=django_comments.models.Comment.objects.all()
+##    logger.info("comment is:"+comment_list.comment)
+#    blog_id = request.POST.get('post_id') 
+#    logger.info("blog id is:"+str(blog_id)) 
+#    #django_comments表中需要blog_id参数
+#    comment=request.POST.get('comment_content')                 
+#    django_comments.models.Comment.objects.create(
+#        content_type_id=9,                                               #content_type_id=9代表的是博客，8代表tag
+#        object_pk=blog_id,                                               
+#        site_id=1,
+#        user=request.user,                                               #当前登录的用户
+#        comment=comment,
+#    )
+#    return HttpResponseRedirect('/%s' %blog_id)

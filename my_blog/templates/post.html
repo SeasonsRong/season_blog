@@ -3,7 +3,18 @@
 {% load custom_markdown %}
 
 {% block content %}
-{% load comments %} 
+{% load staticfiles %}
+<link rel="stylesheet" href="{% static 'mycomments/css/mycomments.css' %}">
+{% load staticfiles %}
+<script src="{% static 'mycomments/js/mycomments.js' %}"></script>
+{% if user.is_authenticated %}
+<script>
+    jQuery(function($) {
+        setAuthenticatedUser();
+    });
+</script>
+{% endif %}
+
 <!---<script type="text/javascript" charset="utf8" src="/static/kindeditor/kindeditor.js"></script>
 <script type="text/javascript" charset="utf8" src="/static/kindeditor/lang/zh_CN.js"></script>
 <script>                   
@@ -34,21 +45,13 @@
                 </div>
                     
         </section>
-       <h3>comments</h3>
-           <ul>
-{% get_comment_list for post as comment_list %}
-{% for comment in comment_list %}
-<p>Posted by: {{ comment.user_name }} on {{ comment.submit_date }}</p>
-<p>Comment: {{ comment.comment }}</p>
-{% endfor %}
-          </ul>
- <h3>leave a comment</h3>
- <form action="/sub_comment/" class="pure-form pure-form-stacked" method="post">  
- 
- <textarea name="comment_content"></textarea>                                            
- <input type="hidden" name="post_id" value={{post.id}}>                                  
- <input type="submit" class="pure-button" value="ok">                                    
- </form>         
+{% load threadedcomments_tags %}
+
+<h2>Comments for {{ post.title }}:</h2>
+
+{% render_comment_list for post %}
+
+{% render_comment_form for post %}       
 </div><!-- /.blog-post -->
 <script type="text/javascript">SyntaxHighlighter.all();</script>  
 {% endblock %}

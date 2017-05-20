@@ -43,15 +43,19 @@ INSTALLED_APPS = (
     'ckeditor', # 添加应用富文本编辑器 ckeditor
     'ckeditor_uploader',
 #    'tinymce',
+    'crispy_forms',
+    'mycomments',
+    'threadedcomments',
     'django_comments', 
     'django.contrib.sites', 
+
 )
 
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-#    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -119,6 +123,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 CKEDITOR_UPLOAD_PATH = os.path.join(MEDIA_ROOT, 'ckeditor/uploads')
+CKEDITOR_IMAGE_BACKEND = 'PIL' 
+
 
 TINYMCE_DEFAULT_CONFIG = {
 'theme': 'advanced',
@@ -176,6 +182,14 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static1"),                                                              
 )                                                                                                    
                                                                                                         
+# 设置自定义的评论应用
+COMMENTS_APP = 'mycomments'
+# 设置自定义的评论应用
+COMMENTS_APP = 'threadedcomments'
+# 设置站点编号, 根据自己需求编号
 SITE_ID = 1
+# 设置 Crispy 的样式主题
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 CKEDITOR_JQUERY_URL ='https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js' 
+

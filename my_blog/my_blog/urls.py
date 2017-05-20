@@ -27,7 +27,7 @@ urlpatterns = [
     url(r'^search/$','article.views.blog_search', name = 'search'),
 #    url(r'^feed/$', RSSFeed(), name = "RSS"),  #新添加的urlconf, 并将name设置为RSS, 方便在模板中使用url
 #    url(r'^tinymce/', include('tinymce.urls')),
-    url(r'^sub_comment/$', 'article.views.sub_comment',name='sub_comment'),        #新增sub_comment
+#    url(r'^sub_comment/$', 'article.views.sub_comment',name='sub_comment'),        #新增sub_comment
     url(r'^comments/', include('django_comments.urls')),
     url(r'^ckeditor/', include('ckeditor_uploader.urls')), 
 ]

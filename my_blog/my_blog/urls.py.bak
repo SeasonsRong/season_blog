@@ -29,4 +29,5 @@ urlpatterns = [
 #    url(r'^tinymce/', include('tinymce.urls')),
     url(r'^sub_comment/$', 'article.views.sub_comment',name='sub_comment'),        #新增sub_comment
     url(r'^comments/', include('django_comments.urls')),
+    url(r'^ckeditor/', include('ckeditor_uploader.urls')), 
 ]
